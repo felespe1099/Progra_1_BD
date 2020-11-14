@@ -74,7 +74,7 @@ create table usuario(
 	rol varchar (20),
 );
 
-alter proc sp_insert_usuario
+create proc sp_insert_usuario
 @user varchar (max),
 @pss varchar (max),
 @key varchar (max),
@@ -87,7 +87,7 @@ set @pssb=(ENCRYPTBYPASSPHRASE('encriptacion',@pss));
 insert into usuario values (@user,@pssb, @role)
 end
 
-exec sp_insert_usuario '','','' --esto para cuando alguien se registre a la base de datos
+exec sp_insert_usuario '','','','' --esto para cuando alguien se registre a la base de datos
 
 create table cliente(
 	usuario varchar(20),
