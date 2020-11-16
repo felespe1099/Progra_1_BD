@@ -30,6 +30,7 @@ create table Veterinario(
 	canton varchar (50) not null,
 	distrito varchar (50) not null,
 	senas varchar (100),
+	ubicacion varchar (500) not null,
 	telefono int,
 	correo varchar (100),
 	sitio_web varchar (100),
@@ -66,7 +67,8 @@ create table cliente(
 	provincia varchar (50) not null,
 	canton varchar (50) not null,
 	distrito varchar (50) not null, 
-	señas varchar (200),	
+	señas varchar (200),
+	ubicacion varchar(500) not null,
 	correo_electronico varchar (200) not null, 	
 	numero int not null,
 	primary key (nombre)
