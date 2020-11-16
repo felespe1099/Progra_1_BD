@@ -1,73 +1,7 @@
 create database MascoTika
 
 use MascoTika
-
-create table Veterinario(
-	identificador varchar(10) not null,
-	nombre varchar (100) not null,
-	provincia varchar (50) not null,
-	canton varchar (50) not null,
-	distrito varchar (50) not null,
-	senas varchar (100),
-	telefono int,
-	correo varchar (100),
-	sitio_web varchar (100),
-	hora_inicio varchar (20) not null,
-	hora_final varchar (20) not null,
-	perfil varchar (500),
-	calificacion int not null,
-);
-
-
-
-create table paciente(
-	identificador varchar (10) not null,
-	raza varchar (50),
-	nombre varchar (50) not null,
-	edad int not null,
-	primary key (nombre),
 	
-);
-
-create table procedimiento(
-		identificador varchar(10) not null,
-		nombre varchar (50) not null,
-		descripcion varchar (200) not null,
-		tipo varchar (15) not null,
-		categoria varchar (20) not null,
-		monto_unitario int not null,
-		monto_domicilio int,
-		primary key(categoria),
-		foreign key (nombre) references paciente (nombre)
-);
-
-create table categoria(
-	nombre varchar (max),
-	codigo int,
-	descripcion varchar (max),
-	estado varchar (max)
-);
-
-create table historial(
-	nombre varchar(50) not null,
-	procedimiento varchar (100) not null,
-	fecha varchar (100) not null,
-	descripcion varchar (200),
-	monto int,
-	lugar varchar (100),
-	diagnostico varchar (100),
-	tratamiento varchar (500),
-	foreign key (nombre) references paciente (nombre)
-);
-
-create table cita(
-	correo varchar (100),
-	fecha varchar (100)not null,
-	contrasena varchar (150),
-	estado varchar(25) not null,
-	tipo varchar (10) not null
-);
-
 create table usuario(
 	usuario varchar (20) not null,
 	contrasena varbinary (max) not null,
@@ -87,17 +21,86 @@ set @pssb=(ENCRYPTBYPASSPHRASE('encriptacion',@pss));
 insert into usuario values (@user,@pssb, @role)
 end
 
-exec sp_insert_usuario '','','','' --esto para cuando alguien se registre a la base de datos
+exec sp_insert_usuario '','','', '' --comando para cuando alguien se registre a la base de datos
+
+create table Veterinario(
+	identificador_vet varchar(10) not null,
+	nombre_vet varchar (100) not null,
+	provincia varchar (50) not null,
+	canton varchar (50) not null,
+	distrito varchar (50) not null,
+	senas varchar (100),
+	telefono int,
+	correo varchar (100),
+	sitio_web varchar (100),
+	hora_inicio varchar (20) not null,
+	hora_final varchar (20) not null,
+	perfil varchar (500),
+	calificacion int not null,
+	primary key (identificador_vet)
+);
+
+create table categoria(
+	nombre varchar (100) not null,
+	codigo varchar(100) not null,
+	descripcion varchar (100) not null,
+	estado varchar (100) not null,
+	primary key (codigo)
+);
+
+create table procedimiento(
+		identificador_proc varchar(100) not null,
+		nombre_proc varchar (50) not null,
+		descripcion varchar (200) not null,
+		tipo varchar (15) not null,
+		estado varchar (20) not null,
+		monto_unitario int not null,
+		monto_domicilio int,
+		foreign key(identificador_proc) references categoria(codigo),
+);
+
 
 create table cliente(
-	usuario varchar(20),
-	contrasena varbinary(max),
-	nombre varchar (200),
-	cedula int,
-	provincia varchar (50),
-	canton varchar (50),
-	distrito varchar (50), 
+	nombre varchar (50) not null,
+	cedula int not null,
+	provincia varchar (50) not null,
+	canton varchar (50) not null,
+	distrito varchar (50) not null, 
 	señas varchar (200),	
-	correo_electronico varchar (200),
-	numero int,					
-);								
+	correo_electronico varchar (200) not null, 	
+	numero int not null,
+	primary key (nombre)
+);
+
+create table paciente(
+	propietario varchar (50) not null,
+	identificador_pac varchar (10) not null,
+	raza varchar (50),
+	nombre_pac varchar (50) not null,
+	edad int not null,
+	primary key (nombre_pac),
+	foreign key (propietario) references cliente (nombre)
+);
+
+create table historial(
+	identificacion varchar (10) not null,
+	nombre varchar(50) not null,
+	procedimiento varchar (100) not null,
+	fecha varchar (100) not null,
+	descripcion varchar (200),
+	monto int,
+	lugar varchar (100),
+	diagnostico varchar (100),
+	tratamiento varchar (500),
+	foreign key (nombre) references paciente (nombre_pac),
+	foreign key (identificacion) references veterinario (identificador_vet)
+);
+		
+create table cita(
+	usuario varchar(50) not null,
+	correo varchar (100) not null,
+	fecha varchar (100)not null,
+	estado varchar(25) not null,
+	tipo varchar (10) not null,
+	foreign key (usuario) references cliente(nombre)
+);
