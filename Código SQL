@@ -1,18 +1,21 @@
 create database MascoTika
 
 use MascoTika
-	
+
+
 create table usuario(
 	usuario varchar (20) not null,
 	contrasena varbinary (max) not null,
 	rol varchar (20),
+	check(rol in('Administrador', 'Veterinario', 'Cliente'))
 );
 
-create proc sp_insert_usuario
-@user varchar (max),
-@pss varchar (max),
-@key varchar (max),
-@role varchar (max)
+
+create proc spInsertUsuario
+@user varchar (100),
+@pss varchar (100),
+@key varchar (100),
+@role varchar (100)
 as
 declare
 @pssb varbinary(max)
@@ -21,7 +24,7 @@ set @pssb=(ENCRYPTBYPASSPHRASE('encriptacion',@pss));
 insert into usuario values (@user,@pssb, @role)
 end
 
-exec sp_insert_usuario '','','', '' --comando para cuando alguien se registre a la base de datos
+exec sp_insert_usuario '','','','' --comando para cuando alguien se registre a la base de datos
 
 create table Veterinario(
 	identificador_vet varchar(10) not null,
@@ -30,7 +33,6 @@ create table Veterinario(
 	canton varchar (50) not null,
 	distrito varchar (50) not null,
 	senas varchar (100),
-	ubicacion varchar (500) not null,
 	telefono int,
 	correo varchar (100),
 	sitio_web varchar (100),
@@ -41,13 +43,15 @@ create table Veterinario(
 	primary key (identificador_vet)
 );
 
+
 create table categoria(
 	nombre varchar (100) not null,
-	codigo varchar(100) not null,
+	codigo varchar(100) not null unique,
 	descripcion varchar (100) not null,
 	estado varchar (100) not null,
 	primary key (codigo)
 );
+
 
 create table procedimiento(
 		identificador_proc varchar(100) not null,
@@ -63,26 +67,27 @@ create table procedimiento(
 
 create table cliente(
 	nombre varchar (50) not null,
-	cedula int not null,
+	cedula int not null unique,
 	provincia varchar (50) not null,
 	canton varchar (50) not null,
 	distrito varchar (50) not null, 
-	señas varchar (200),
-	ubicacion varchar(500) not null,
+	señas varchar (200),	
 	correo_electronico varchar (200) not null, 	
 	numero int not null,
 	primary key (nombre)
 );
 
+
 create table paciente(
 	propietario varchar (50) not null,
-	identificador_pac varchar (10) not null,
+	identificador_pac varchar (10) not null unique,
 	raza varchar (50),
 	nombre_pac varchar (50) not null,
 	edad int not null,
 	primary key (nombre_pac),
 	foreign key (propietario) references cliente (nombre)
 );
+
 
 create table historial(
 	identificacion varchar (10) not null,
@@ -103,6 +108,7 @@ create table cita(
 	correo varchar (100) not null,
 	fecha varchar (100)not null,
 	estado varchar(25) not null,
+	check (estado in ('Pendiente', 'Asignada', 'Cancelada por el cliente', 'Cancelada por el veterinario', 'Realizada')),
 	tipo varchar (10) not null,
 	foreign key (usuario) references cliente(nombre)
 );
