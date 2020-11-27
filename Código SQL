@@ -110,5 +110,6 @@ create table cita(
 	estado varchar(25) not null,
 	check (estado in ('Pendiente', 'Asignada', 'Cancelada por el cliente', 'Cancelada por el veterinario', 'Realizada')),
 	tipo varchar (10) not null,
+	veterinario varchar (50) not null,
 	foreign key (usuario) references cliente(nombre)
 );
